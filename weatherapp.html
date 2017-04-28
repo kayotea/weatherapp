@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Weather App</title>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+
+            function showTemp(city, temp){
+                if($('#tempbox').children().length > 0){
+                    $('#tempbox').html('');
+                    $('#tempbox').append('<h2>'+city+'</h2><p>Temperature: '+temp+'</p>');
+                } else {
+                    $('#tempbox').append('<h2>'+city+'</h2><p>Temperature: '+temp+'</p>');
+                }
+            }
+            $(document).ready(function() {
+                $('form').submit(function() {
+                    $(this).serialize();
+
+                    // get the city inputted by the user
+                    var inputcity = $(this).find('input[name="city"]').val();
+                    var city = "";
+                    var i = 0;      // incrementer i
+                    var j = 0;      // incrementer j
+                    // if there is a space, format if for the computer
+                    while(i < inputcity.length){
+                        if (inputcity[j] == " "){
+                            city += "%";
+                            city += "2";
+                            city += "0";
+                            j += 2;
+                        }else{
+                            city += inputcity[i];
+                            j++;
+                        }
+                        i++;
+                    }
+                    // get api url to pass to $.get()
+                    var url = "http://api.openweathermap.org/data/2.5/weather?q="+city+"&APPID=e06f6de032117e0a2698105710b12b35";
+                    $.get(url, function(res) {
+                        var temp = Math.floor((res.main.temp - 273)*(9/5)+32);
+                        showTemp(inputcity, temp);
+                    }, 'json');
+                    return false;
+                });
+            });
+        </script>
+</head>
+    <body>
+        <div id="wrapper">
+            <form>
+                <input type="text" name="city" value="">
+                <input type="submit" value="Search Weather">
+            </form>
+            <div id="tempbox">
+            </div>
+        </div>
+    <style>
+        #wrapper{
+            background: lightblue;
+            width: 500px;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 0 auto;
+        }
+    </style>
+</body>
+</html>
